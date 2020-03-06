@@ -34,10 +34,36 @@ public class CInstructionMapper {
 		compCode.put("M-D", "000111");
 		compCode.put("D&M", "000000");
 		compCode.put("D|M", "010101");
-
-
-
-
+		
+		destCode.put("null", "000");
+		destCode.put("M", "001");
+		destCode.put("D", "010");
+		destCode.put("MD", "011");
+		destCode.put("A", "100");
+		destCode.put("AM", "101");
+		destCode.put("AD", "110");
+		destCode.put("AMD", "111");
+		
+		jumpCode.put("null", "000");
+		jumpCode.put("JGT", "001");
+		jumpCode.put("JEQ", "010");
+		jumpCode.put("JGE", "011");
+		jumpCode.put("JLT", "100");
+		jumpCode.put("JNE", "101");
+		jumpCode.put("JLE", "110");
+		jumpCode.put("JMP", "111");
+	}
+	
+	public String comp(String mnemonic) {
+		return compCode.get(mnemonic);
+	}
+	
+	public String dest(String mnemonic) {
+		return destCode.get(mnemonic);
+	}
+	
+	public String jump(String mnemonic) {
+		return jumpCode.get(mnemonic);
 	}
 
 
