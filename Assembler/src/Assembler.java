@@ -26,6 +26,7 @@ public class Assembler {
 					parser.advance();
 				}
 				
+				System.out.println(decimalToBinary(16383));
 				
 				break;
 			}
@@ -36,6 +37,19 @@ public class Assembler {
 				JOptionPane.showMessageDialog(null, "Please select an assembly file.", "Invalid File Format",  0);
 			}
 		}
+	}
+	
+	private static String decimalToBinary(int num) {
+		
+		String binary = Integer.toBinaryString(num);
+		String binary16 = "";
+		
+		for(int i = 0; i < 16 - binary.length(); i++)
+			binary16 += "0";
+		
+		binary16 += binary;
+		
+		return binary16;
 	}
 
 }
