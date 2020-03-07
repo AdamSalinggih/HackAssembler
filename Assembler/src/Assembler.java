@@ -26,7 +26,6 @@ public class Assembler {
 					parser.advance();
 				}
 				
-				System.out.println(decimalToBinary(16383));
 				
 				break;
 			}
