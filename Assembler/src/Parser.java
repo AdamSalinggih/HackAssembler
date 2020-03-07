@@ -18,6 +18,10 @@ public class Parser {
 	
 	public void advance() {
 		rawLine = scan.nextLine();
+		
+		if(rawLine.contains("//"))
+			rawLine = rawLine.substring(0, rawLine.indexOf("//")).trim();
+		
 		lineNumber++;
 	}
 	

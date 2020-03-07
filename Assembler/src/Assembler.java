@@ -9,7 +9,6 @@ public class Assembler {
 		Parser parser;
 		File file;
 		
-		
 		while(true) {
 			try {
 				if( fileChooser.showDialog(null, "Open Assembly File") == JFileChooser.CANCEL_OPTION)
