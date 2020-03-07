@@ -25,36 +25,26 @@ public class Parser {
 		rawLine = scan.nextLine();
 		cleanText();
 		
-		if( getInstructionType(rawLine) == Command.A_INSTRUCTION) {
-			
+		if( getInstructionType(rawLine) == Command.A_INSTRUCTION) {			
 			if( rawLine.charAt(1) == 'R' && Character.isDigit(rawLine.charAt(2))) {
-				rawLine.replace("R", "");
-				
+				rawLine.replace("R", "");			
 				writer.write(decimalToBinary(Integer.parseInt( rawLine.substring(1))));
 				System.out.println("IF Executed");
 			}
 			else {
-				rawLine = rawLine.replace("@", "");
-				
+				rawLine = rawLine.replace("@", "");				
 				writer.write( decimalToBinary(Integer.parseInt(rawLine)) + "\n");				
 			}	
-		}
-		
-		if( getInstructionType(rawLine) == Command.C_INSTRUCTION) {
-			destMnemonic = rawLine.substring(0, rawLine.indexOf('='));
-			destMnemonic = mapper.dest(destMnemonic);
+		}		
+		else if( getInstructionType(rawLine) == Command.C_INSTRUCTION) {
+			jumpMnemonic = mapper.jump(getJumpMnemonic(rawLine));
+			compMnemonic = mapper.comp(getCompMnemonic(rawLine));
+			destMnemonic = mapper.dest(getDestMnemonic(rawLine));
 			
-			compMnemonic = rawLine.substring(rawLine.indexOf('=') + 1);
-			compMnemonic = mapper.comp(compMnemonic);
-			
-			destAType = getDestAType(rawLine);
-
-			writer.write("111" + destAType + compMnemonic + destMnemonic + "000\n");
-
+			writer.write("111" + getDestAType(rawLine) + compMnemonic + destMnemonic + jumpMnemonic + "\n");
 		}
-
 	}
-	
+
 	public boolean hasMoreCommands() {
 		return scan.hasNextLine();
 	}
@@ -106,5 +96,26 @@ public class Parser {
 		}
 		else
 			return "0";		
+	}
+	
+	private String getDestMnemonic(String text) {
+		return text = text.substring(0, rawLine.indexOf('='));
+		
+	}
+	
+	private String getCompMnemonic(String text) {
+		
+		if(text.contains(";"))
+			return text.substring(text.indexOf('=') + 1, text.indexOf(";"));
+		else
+			return text.substring(text.indexOf('=') + 1);
+		
+	}
+	
+	private String getJumpMnemonic(String text) {
+		if(text.contains(";"))
+			return text.substring(text.indexOf(";"));
+		else
+			return "null";
 	}
 }
