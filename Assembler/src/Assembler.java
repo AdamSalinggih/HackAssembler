@@ -25,29 +25,18 @@ public class Assembler {
 					parser.advance();
 				}
 				
-				
+				Parser.writer.close();
+				Parser.scan.close();
 				break;
 			}
 			catch(NoSuchElementException ne) {
 				JOptionPane.showMessageDialog(null, "All instructions have been succesfully parsed.", "Success!", 1);			
 			}
 			catch(Exception e) {
+				e.printStackTrace();
 				JOptionPane.showMessageDialog(null, "Please select an assembly file.", "Invalid File Format",  0);
 			}
 		}
-	}
-	
-	private static String decimalToBinary(int num) {
-		
-		String binary = Integer.toBinaryString(num);
-		String binary16 = "";
-		
-		for(int i = 0; i < 16 - binary.length(); i++)
-			binary16 += "0";
-		
-		binary16 += binary;
-		
-		return binary16;
 	}
 
 }
