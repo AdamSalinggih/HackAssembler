@@ -1,11 +1,14 @@
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Parser {
 	protected static Scanner scan;
 	protected static FileWriter writer;
+	private Scanner labelReader;
+	ArrayList<String> labelList = new ArrayList<String>();
 	private CInstructionMapper mapper = new CInstructionMapper();
 	private String compMnemonic;
 	private String destMnemonic;
@@ -17,13 +20,23 @@ public class Parser {
 	
 	public Parser(File file) throws IOException {
 		scan = new Scanner(file);
+		labelReader = new Scanner(file);
+		
+		//read the file and map all labels to its jump destinations 
+		while(labelReader.hasNextLine()) {
+			String currentLine = labelReader.nextLine();
+			currentLine = cleanText(currentLine);
+			
+		
+		}
+	
 		
 		writer = new FileWriter(file.getName().substring(0, file.getName().indexOf(".")) + ".hack");
 	}
 	
 	public void advance() throws NumberFormatException, IOException {
 		rawLine = scan.nextLine();
-		cleanText();
+		rawLine = cleanText(rawLine);
 		
 		if( getInstructionType(rawLine) == Command.A_INSTRUCTION) {			
 			if( rawLine.charAt(1) == 'R' && Character.isDigit(rawLine.charAt(2))) {
@@ -49,13 +62,13 @@ public class Parser {
 		return scan.hasNextLine();
 	}
 	
-	private String cleanText() {
+	private String cleanText(String text) {
 		
-		if(rawLine.contains("//"))
-			rawLine = rawLine.substring(0, rawLine.indexOf("//")).trim();
+		if(text.contains("//"))
+			text = text.substring(0, text.indexOf("//")).trim();
 		
 	
-		return rawLine;	
+		return text;	
 	}
 	
 	public Command getInstructionType(String text) {
