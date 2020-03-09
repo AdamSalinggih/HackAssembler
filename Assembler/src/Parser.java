@@ -45,11 +45,22 @@ public class Parser {
 			System.out.println(rawLine + " : " + destMnemonic + " " + compMnemonic + " " + jumpMnemonic + "\n");
 		}
 	}
-
+	
+	/**
+	 * Identify whether there is more line to read in the file
+	 * 
+	 * @return True if there is another line to read
+	 */
 	public boolean hasMoreCommands() {
 		return scan.hasNextLine();
 	}
 	
+	/**
+	 * Remove comments and empty spaces within a line
+	 * 
+	 * @param text The string
+	 * @return Cleared instruction line 
+	 */
 	private String cleanText(String text) {	
 		if(text.contains("//"))
 			text = text.substring(0, text.indexOf("//")).trim();
@@ -136,5 +147,72 @@ public class Parser {
 	 */
 	private String getLabelMnemonic(String text) {
 		return text.substring(1, text.length() - 1);
+	}
+	
+	/**
+	 * Identify whether the input string is an address instruction
+	 * 
+	 * @param text The string
+	 * @return True if the string is an address instruction;
+	 */
+	private boolean isAddressInstruction(String text) {
+		if(text.charAt(0) == '@') {
+			text = text.substring(1);
+			if(text.charAt(0) == 'R')
+				text = text.substring(1);
+			
+			try {
+				int val = Integer.parseInt(text);
+				
+				if(val < 16384)
+					return true;
+			}
+			catch(NumberFormatException nfe) {
+				return false;
+			}
+		}		
+		return false;
+	}
+	
+	/**
+	 * Identify whether the string is a screen instruction
+	 * 
+	 * @param text The string
+	 * @return True if the string is "@SCREEN" or any integer between 16384 and 24575;
+	 */
+	private boolean isSreenInstruction(String text) {
+		if(text.contentEquals("@SCREEN"))
+			return true;
+		
+		if(text.charAt(0) == '@') {
+			text = text.substring(1);			
+			try {
+				int val = Integer.parseInt(text);		
+				if(val > 16383 && val < 24576)
+					return true;
+			}
+			catch(NumberFormatException nfe) {
+				return false;
+			}
+		}		
+		return false;
+	}
+	
+	private boolean isKeyboardInstruction(String text) {
+		if(text.contentEquals("KBD"))
+			return true;
+		
+		if(text.charAt(0) == '@') {
+			text = text.substring(1);			
+			try {
+				int val = Integer.parseInt(text);		
+				if(val > 24575)
+					return true;
+			}
+			catch(NumberFormatException nfe) {
+				return false;
+			}
+		}		
+		return false;
 	}
 }
