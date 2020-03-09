@@ -14,24 +14,13 @@ public class Parser {
 	private String destMnemonic;
 	private String jumpMnemonic;
 	private String rawLine;
-	private String cleanLine;
-	private String destAType;
-	int    lineNumber;
+	private int    lineNumber;
 	
 	public Parser(File file) throws IOException {
 		scan = new Scanner(file);
-		labelReader = new Scanner(file);
-		
-		//read the file and map all labels to its jump destinations 
-		while(labelReader.hasNextLine()) {
-			String currentLine = labelReader.nextLine();
-			currentLine = cleanText(currentLine);
-			
-		
-		}
-	
-		
 		writer = new FileWriter(file.getName().substring(0, file.getName().indexOf(".")) + ".hack");
+		
+		System.out.println(file.getName());
 	}
 	
 	public void advance() throws NumberFormatException, IOException {
@@ -41,20 +30,19 @@ public class Parser {
 		if( getInstructionType(rawLine) == Command.A_INSTRUCTION) {			
 			if( rawLine.charAt(1) == 'R' && Character.isDigit(rawLine.charAt(2))) {
 				rawLine.replace("R", "");			
-				writer.write(decimalToBinary(Integer.parseInt( rawLine.substring(1))));
-				System.out.println("IF Executed");
+				System.out.println(decimalToBinary(Integer.parseInt( rawLine.substring(1))));
 			}
 			else {
 				rawLine = rawLine.replace("@", "");				
-				writer.write( decimalToBinary(Integer.parseInt(rawLine)) + "\n");				
+				System.out.println( decimalToBinary(Integer.parseInt(rawLine)) + "\n");				
 			}	
 		}		
 		else if( getInstructionType(rawLine) == Command.C_INSTRUCTION) {
-			jumpMnemonic = mapper.jump(getJumpMnemonic(rawLine));
-			compMnemonic = mapper.comp(getCompMnemonic(rawLine));
-			destMnemonic = mapper.dest(getDestMnemonic(rawLine));
+			jumpMnemonic = getJumpMnemonic(rawLine);
+			compMnemonic = getCompMnemonic(rawLine);
+			destMnemonic = getDestMnemonic(rawLine);
 			
-			writer.write("111" + getDestAType(rawLine) + compMnemonic + destMnemonic + jumpMnemonic + "\n");
+			System.out.println(rawLine + " : " + destMnemonic + " " + compMnemonic + " " + jumpMnemonic + "\n");
 		}
 	}
 
@@ -62,12 +50,10 @@ public class Parser {
 		return scan.hasNextLine();
 	}
 	
-	private String cleanText(String text) {
-		
+	private String cleanText(String text) {	
 		if(text.contains("//"))
 			text = text.substring(0, text.indexOf("//")).trim();
 		
-	
 		return text;	
 	}
 	
@@ -82,6 +68,12 @@ public class Parser {
 			return Command.NO_INSTRUCTION;	
 	}
 	
+	/**
+	 * Convert an integer to a 16-bit binary
+	 * 
+	 * @param num
+	 * @return 16-bit binary representation
+	 */
 	private String decimalToBinary(int num) {
 		
 		String binary = Integer.toBinaryString(num);
@@ -90,45 +82,59 @@ public class Parser {
 		for(int i = 0; i < 16 - binary.length(); i++)
 			binary16 += "0";
 		
-		binary16 += binary;
-		
+		binary16 += binary;		
 		return binary16;
 	}
 	
-	private String getDestAType(String rawLine) {
-		if( rawLine.equals("M")   |
-			rawLine.equals("!M")  |
-			rawLine.equals("-M")  |
-			rawLine.equals("M+1") |
-			rawLine.equals("D+M") |
-			rawLine.equals("D-M") |
-			rawLine.equals("M-D") |
-			rawLine.equals("D&M") |
-			rawLine.equals("D|M") ) {
-			return "1";
-		}
-		else
-			return "0";		
-	}
-	
+	/**
+	 * Read the instruction string and identify the destination mnemonic
+	 * 
+	 * @param text The instruction string
+	 * @return The destination mnemonic
+	 */
 	private String getDestMnemonic(String text) {
-		return text = text.substring(0, rawLine.indexOf('='));
+		if(text.contains(";"))
+			text = text.substring(0, text.indexOf(";"));
 		
+		if(text.contains("="))
+			text = text.substring(0, rawLine.indexOf('='));
+		
+		return text;		
 	}
 	
-	private String getCompMnemonic(String text) {
-		
+	/**
+	 * Read the instruction string and identify the comp mnemonic
+	 * 
+	 * @param textmThe instruction string
+	 * @return The comp mnemonic
+	 */
+	private String getCompMnemonic(String text) {	
 		if(text.contains(";"))
 			return text.substring(text.indexOf('=') + 1, text.indexOf(";"));
 		else
-			return text.substring(text.indexOf('=') + 1);
-		
+			return text.substring(text.indexOf('=') + 1);		
 	}
 	
+	/**
+	 * Read the instruction string and identify the jump mnemonic
+	 * 
+	 * @param text The instruction string
+	 * @return The jump mnemonic
+	 */
 	private String getJumpMnemonic(String text) {
 		if(text.contains(";"))
 			return text.substring(text.indexOf(";"));
 		else
 			return "null";
+	}
+	
+	/**
+	 * Read a label instruction and returns the label's name
+	 * 
+	 * @param text The instruction string
+	 * @return The label's name
+	 */
+	private String getLabelMnemonic(String text) {
+		return text.substring(1, text.length() - 1);
 	}
 }
