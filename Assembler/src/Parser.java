@@ -1,26 +1,31 @@
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Scanner;
 
 public class Parser {
 	protected static Scanner scan;
 	protected static FileWriter writer;
-	private Scanner labelReader;
-	ArrayList<String> labelList = new ArrayList<String>();
+	private HashMap<String, String> labelList = new HashMap<String, String>();
+	private HashMap<String, String> varList = new HashMap<String, String>();
 	private CInstructionMapper mapper = new CInstructionMapper();
 	private String compMnemonic;
 	private String destMnemonic;
 	private String jumpMnemonic;
 	private String rawLine;
+	private int	   varCount = 16; //tracks the number of variables created
 	private int    lineNumber;
 	
 	public Parser(File file) throws IOException {
 		scan = new Scanner(file);
 		writer = new FileWriter(file.getName().substring(0, file.getName().indexOf(".")) + ".hack");
+		this.readLabels(file);
+		this.readVariables(file);
 		
-		System.out.println(file.getName());
+		System.out.println(labelList);
+		System.out.println(varList);
 	}
 	
 	public void advance() throws NumberFormatException, IOException {
@@ -150,6 +155,18 @@ public class Parser {
 	}
 	
 	/**
+	 * 
+	 * @param text The string
+	 * @return True if the string is within parentheses
+	 */
+	private boolean isLabelInstruction(String text) {
+		if(text.charAt(0) == '(' && text.charAt(text.length() - 1) == ')')
+			return true;
+		
+		return false;
+	}
+	
+	/**
 	 * Identify whether the input string is an address instruction
 	 * 
 	 * @param text The string
@@ -221,5 +238,65 @@ public class Parser {
 			}
 		}		
 		return false;
+	}
+	
+	/**
+	 * Read all labels in the assembly file and assign every label to
+	 * its associated jump address. This method must be executed before
+	 * reading all instructions in the assembly file 
+	 * 
+	 * 
+	 * @param file The assembly file
+	 * @throws FileNotFoundException
+	 */
+	private void readLabels(File file) throws FileNotFoundException{
+		Scanner reader = new Scanner(file);
+		String labelName = "";
+		boolean labelAddress = false;
+		
+		while(reader.hasNextLine()) {
+			String instruction = reader.nextLine();
+			
+			if(labelAddress) {
+				labelList.put(labelName, instruction);
+				labelAddress = false;
+			}
+			
+			if(this.isLabelInstruction(instruction)) {
+				labelAddress = true;
+				labelName = this.getLabelMnemonic(instruction);
+			}
+		}			
+		reader.close();
+	}
+	
+	/**
+	 * Read all variables in the assembly file and assign every variable
+	 * to its associated address in RAM. This method must be executed before 
+	 * reading all instructions in the assembly
+	 * 
+	 * @param file The assembly file
+	 * @throws FileNotFoundException
+	 */
+	private void readVariables(File file)throws FileNotFoundException{
+		Scanner reader = new Scanner(file);
+				
+		while(reader.hasNextLine()) {
+			String instruction = reader.nextLine();
+			
+			if(isAddressInstruction(instruction)) {
+				instruction = instruction.substring(1);
+				
+				try {
+					Integer.parseInt(instruction);
+					return;
+				}
+				catch(NumberFormatException nfe) {
+					varList.put(instruction, "@" + varCount);
+					varCount++;
+				}
+			}
+		}
+		reader.close();		
 	}
 }

@@ -1,3 +1,12 @@
+/**
+ * @author Adam Salinggih
+ * @version 1.0
+ * @project Project 7 of nand2tetris. 
+ * 	Assembler program to convert an assembly file
+ * 	into a hack file by translating all instructions
+ * 	within the given file into its machine language(binary codes)
+ */
+
 import java.io.File;
 import java.util.NoSuchElementException;
 import javax.swing.JFileChooser;
@@ -22,15 +31,12 @@ public class Assembler {
 				parser = new Parser(file);
 				
 				while(parser.hasMoreCommands()) {
-					parser.advance();
+					//parser.advance();
 				}
 				
 				Parser.writer.close();
 				Parser.scan.close();
-				break;
-			}
-			catch(NoSuchElementException ne) {
-				JOptionPane.showMessageDialog(null, "All instructions have been succesfully parsed.", "Success!", 1);			
+				break;	
 			}
 			catch(Exception e) {
 				e.printStackTrace();
