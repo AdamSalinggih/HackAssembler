@@ -198,6 +198,13 @@ public class Parser {
 		return false;
 	}
 	
+	
+	/**
+	 * Identify whether an instruction is accessing the keyboard
+	 * 
+	 * @param text The instruction string
+	 * @return True if it accesses keyboard addresses
+	 */
 	private boolean isKeyboardInstruction(String text) {
 		if(text.contentEquals("KBD"))
 			return true;

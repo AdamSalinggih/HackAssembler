@@ -5,6 +5,10 @@ public class CInstructionMapper {
 	HashMap<String, String> destCode = new HashMap<String,String>();
 	HashMap<String, String> jumpCode = new HashMap<String,String>();
 	
+	/**
+	 * Constructor for CInstructionMapper class
+	 * Assign all valid mnemonics with its associated binary instructions.
+	 */
 	public CInstructionMapper() {
 		compCode.put("0", "101010");
 		compCode.put("1", "111111");
@@ -54,14 +58,32 @@ public class CInstructionMapper {
 		jumpCode.put("JMP", "111");
 	}
 	
+	/**
+	 * Return the binary code for computation instruction segment
+	 * 
+	 * @param mnemonic
+	 * @return Binary code instruction
+	 */
 	public String comp(String mnemonic) {
 		return compCode.get(mnemonic);
 	}
 	
+	/**
+	 * Return the binary code for destination instruction segment
+	 * 
+	 * @param mnemonic
+	 * @return Binary code instruction
+	 */
 	public String dest(String mnemonic) {
 		return destCode.get(mnemonic);
 	}
 	
+	/**
+	 * Return the binary code for jump instruction segment
+	 * 
+	 * @param mnemonic 
+	 * @return Binary code instruction instruction
+	 */
 	public String jump(String mnemonic) {
 		return jumpCode.get(mnemonic);
 	}
