@@ -98,7 +98,7 @@ public class Parser {
 	/**
 	 * Read the instruction string and identify the comp mnemonic
 	 * 
-	 * @param textmThe instruction string
+	 * @param text The instruction string
 	 * @return The comp mnemonic
 	 */
 	private String getCompMnemonic(String text) {	
