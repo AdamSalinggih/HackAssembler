@@ -11,30 +11,13 @@ public class SymbolTable {
     private HashMap<String, Integer> symbolTable = new HashMap<String, Integer>();
 
     public SymbolTable(File file) throws FileNotFoundException {
+        Scanner labelReader = new Scanner(file);
 
-        Scanner reader = new Scanner(file);
-
-        while(reader.hasNextLine()){
-
-            String line = clean(reader.nextLine());
-
+        //read all labels
+        while(labelReader.hasNextLine()){
+            String line = clean(labelReader.nextLine());
             if(line.isEmpty())
                 continue;
-            else if(line.charAt(0) == '@'){
-                    line = line.substring(1);
-                    if(!variableNames.contains(line)) {
-                        try {
-                            Integer.parseInt(line);
-                            lineCount++;
-                            continue;
-                        }
-                        catch (NumberFormatException nfe) {
-                            variableNames.add(line);
-                            lineCount++;
-                            continue;
-                        }
-                    }
-            }
             else if(line.charAt(0) == '(' && line.charAt(line.length() - 1) == ')') {
                 line = line.replace("(", "");
                 line = line.replace(")", "");
@@ -49,10 +32,25 @@ public class SymbolTable {
             }
         }
 
-        for (String var : variableNames) {
-            if(!symbolTable.containsKey(var))
-                symbolTable.put(var, varCount++);
+        //read all variables
+        Scanner variableReader = new Scanner(file);
+        while(variableReader.hasNextLine()){
+            String line = clean(variableReader.nextLine());
+            if(line.isEmpty())
+                continue;
+            if(line.charAt(0) == '@'){
+                line = line.substring(1);
+                try{
+                    Integer.parseInt(line);
+                    continue;
+                }
+                catch(NumberFormatException nfe){
+                    if(!symbolTable.containsKey(line))
+                        symbolTable.put(line, varCount++);
+                }
+            }
         }
+
         System.out.println(symbolTable);
     }
 
