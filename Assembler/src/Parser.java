@@ -20,29 +20,12 @@ public class Parser {
 	public Parser(File file) throws IOException {
 		scan = new Scanner(file);
 		writer = new FileWriter(file.getName().substring(0, file.getName().indexOf(".")) + ".hack");
+		SymbolTable table = new SymbolTable(file);
 	}
 	
 	public void advance() throws NumberFormatException, IOException {
 		rawLine = scan.nextLine();
 		rawLine = cleanText(rawLine);
-		
-		if( getInstructionType(rawLine) == Command.A_INSTRUCTION) {			
-			if( rawLine.charAt(1) == 'R' && Character.isDigit(rawLine.charAt(2))) {
-				rawLine.replace("R", "");			
-				System.out.println(decimalToBinary(Integer.parseInt( rawLine.substring(1))));
-			}
-			else {
-				rawLine = rawLine.replace("@", "");				
-				System.out.println( decimalToBinary(Integer.parseInt(rawLine)) + "\n");				
-			}	
-		}		
-		else if( getInstructionType(rawLine) == Command.C_INSTRUCTION) {
-			jumpMnemonic = getJumpMnemonic(rawLine);
-			compMnemonic = getCompMnemonic(rawLine);
-			destMnemonic = getDestMnemonic(rawLine);
-			
-			System.out.println(rawLine + " : " + destMnemonic + " " + compMnemonic + " " + jumpMnemonic + "\n");
-		}
 	}
 	
 	/**

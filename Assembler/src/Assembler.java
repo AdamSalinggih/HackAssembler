@@ -30,9 +30,9 @@ public class Assembler {
 				
 				parser = new Parser(file);
 				
-				while(parser.hasMoreCommands()) {
+				//while(parser.hasMoreCommands()) {
 					//parser.advance();
-				}
+				//}
 				
 				Parser.writer.close();
 				Parser.scan.close();
