@@ -15,17 +15,11 @@ public class Parser {
 	private String destMnemonic;
 	private String jumpMnemonic;
 	private String rawLine;
-	private int	   varCount = 16; //tracks the number of variables created
-	private int    lineNumber;
+
 	
 	public Parser(File file) throws IOException {
 		scan = new Scanner(file);
 		writer = new FileWriter(file.getName().substring(0, file.getName().indexOf(".")) + ".hack");
-		this.readLabels(file);
-		this.readVariables(file);
-		
-		System.out.println(labelList);
-		System.out.println(varList);
 	}
 	
 	public void advance() throws NumberFormatException, IOException {
@@ -198,7 +192,7 @@ public class Parser {
 	 * @return True if the string is "@SCREEN" or any integer between 16384 and 24575;
 	 */
 	private boolean isSreenInstruction(String text) {
-		if(text.contentEquals("@SCREEN"))
+		if(text.equals("@SCREEN"))
 			return true;
 		
 		if(text.charAt(0) == '@') {
@@ -223,7 +217,7 @@ public class Parser {
 	 * @return True if it accesses keyboard addresses
 	 */
 	private boolean isKeyboardInstruction(String text) {
-		if(text.contentEquals("KBD"))
+		if(text.equals("@KBD"))
 			return true;
 		
 		if(text.charAt(0) == '@') {
@@ -238,65 +232,5 @@ public class Parser {
 			}
 		}		
 		return false;
-	}
-	
-	/**
-	 * Read all labels in the assembly file and assign every label to
-	 * its associated jump address. This method must be executed before
-	 * reading all instructions in the assembly file 
-	 * 
-	 * 
-	 * @param file The assembly file
-	 * @throws FileNotFoundException
-	 */
-	private void readLabels(File file) throws FileNotFoundException{
-		Scanner reader = new Scanner(file);
-		String labelName = "";
-		boolean labelAddress = false;
-		
-		while(reader.hasNextLine()) {
-			String instruction = reader.nextLine();
-			
-			if(labelAddress) {
-				labelList.put(labelName, instruction);
-				labelAddress = false;
-			}
-			
-			if(this.isLabelInstruction(instruction)) {
-				labelAddress = true;
-				labelName = this.getLabelMnemonic(instruction);
-			}
-		}			
-		reader.close();
-	}
-	
-	/**
-	 * Read all variables in the assembly file and assign every variable
-	 * to its associated address in RAM. This method must be executed before 
-	 * reading all instructions in the assembly
-	 * 
-	 * @param file The assembly file
-	 * @throws FileNotFoundException
-	 */
-	private void readVariables(File file)throws FileNotFoundException{
-		Scanner reader = new Scanner(file);
-				
-		while(reader.hasNextLine()) {
-			String instruction = reader.nextLine();
-			
-			if(isAddressInstruction(instruction)) {
-				instruction = instruction.substring(1);
-				
-				try {
-					Integer.parseInt(instruction);
-					return;
-				}
-				catch(NumberFormatException nfe) {
-					varList.put(instruction, "@" + varCount);
-					varCount++;
-				}
-			}
-		}
-		reader.close();		
-	}
+	}	
 }
