@@ -38,17 +38,29 @@ public class SymbolTable {
             String line = clean(variableReader.nextLine());
             if(line.isEmpty())
                 continue;
-            if(line.charAt(0) == '@'){
-                line = line.substring(1);
+            else if(line.charAt(0) == '@' && line.charAt(1) == 'R'){
+                line = line.substring(2);
                 try{
                     Integer.parseInt(line);
                     continue;
+                }
+                catch(NumberFormatException nfe){
+                    if(!symbolTable.containsKey("R" + line))
+                        symbolTable.put("R" + line, varCount++);
+                        continue;
+                }
+            }
+            else if(line.charAt(0) == '@'){
+                line = line.substring(1);
+                try{
+                    Integer.parseInt(line);
                 }
                 catch(NumberFormatException nfe){
                     if(!symbolTable.containsKey(line))
                         symbolTable.put(line, varCount++);
                 }
             }
+
         }
 
         System.out.println(symbolTable);
