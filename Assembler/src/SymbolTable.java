@@ -26,7 +26,6 @@ public class SymbolTable {
                     addEntry(line, lineCount);
             }
             else {
-                System.out.println("Line: " + lineCount + "\tInstruction: " + line);
                 lineCount++;
                 continue;
             }
@@ -62,8 +61,8 @@ public class SymbolTable {
             }
 
         }
-
-        System.out.println(symbolTable);
+        labelReader.close();
+        variableReader.close();
     }
 
     /**

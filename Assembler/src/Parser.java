@@ -5,16 +5,19 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Scanner;
 
+import javax.swing.JOptionPane;
+
 public class Parser {
 	protected static Scanner scan;
 	protected static FileWriter writer;
-	private HashMap<String, String> labelList = new HashMap<String, String>();
-	private HashMap<String, String> varList = new HashMap<String, String>();
 	private CInstructionMapper mapper = new CInstructionMapper();
 	private String compMnemonic;
 	private String destMnemonic;
 	private String jumpMnemonic;
 	private String rawLine;
+	private Command commandType;
+	private int lineCount;
+	
 
 	
 	public Parser(File file) throws IOException {
@@ -23,9 +26,26 @@ public class Parser {
 		SymbolTable table = new SymbolTable(file);
 	}
 	
+	/**
+	 * Read the next available line in the assembly file
+	 * 
+	 * @throws NumberFormatException
+	 * @throws IOException
+	 */
 	public void advance() throws NumberFormatException, IOException {
 		rawLine = scan.nextLine();
 		rawLine = cleanText(rawLine);
+		commandType = getInstructionType(rawLine);
+		
+		if(commandType != Command.NO_INSTRUCTION)
+			lineCount++;
+		
+		try {
+			if(commandType == Command.INVALID_INSTRUCTION)
+				throw new InvalidAssemblyInstructionException();
+			System.out.println(rawLine + "\t" + commandType);
+		}
+		catch(InvalidAssemblyInstructionException iaie) {}
 	}
 	
 	/**
@@ -50,15 +70,22 @@ public class Parser {
 		return text;	
 	}
 	
+	/**
+	 * Return the current line's instruction type
+	 * 
+	 * @param text	The assembly instruction
+	 * @return	Command instruction type
+	 */
 	public Command getInstructionType(String text) {
-		if(text.contains("@"))
+		if(text.isEmpty())
+			return Command.NO_INSTRUCTION;
+			else if(text.charAt(0) == '@')
 			return Command.A_INSTRUCTION;
-		else if(text.contains("="))
+		else if(text.contains("=") || text.contains(";"))
 			return Command.C_INSTRUCTION;
-		else if(text.contains("("))
-			return Command.L_INSTRUCTION;	
-		else 
-			return Command.NO_INSTRUCTION;	
+		else if(text.charAt(0) == '(' && text.charAt(text.length() - 1) == ')')
+			return Command.L_INSTRUCTION;		
+		else return Command.INVALID_INSTRUCTION;
 	}
 	
 	/**
@@ -216,4 +243,11 @@ public class Parser {
 		}		
 		return false;
 	}	
+	
+	private class InvalidAssemblyInstructionException extends Exception{
+		private InvalidAssemblyInstructionException() {
+			JOptionPane.showMessageDialog(null, "Invalid assembly instruction found at line: " + lineCount + "\nString: " + rawLine, "Error", 0);
+			System.out.close();
+		}
+	}
 }
