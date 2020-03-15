@@ -12,7 +12,8 @@ public class SymbolTable {
 
     public SymbolTable(File file) throws FileNotFoundException {
         Scanner labelReader = new Scanner(file);
-
+        addEntry("SCREEN", 16384);
+        addEntry("KBD", 24576);
         //read all labels
         while(labelReader.hasNextLine()){
             String line = clean(labelReader.nextLine());
@@ -100,5 +101,15 @@ public class SymbolTable {
             text = text.substring(0, text.indexOf("//")).trim();
 
         return text;
+    }
+
+    /**
+     * Return whether the address is a variable or label
+     *
+     * @param key   The address
+     * @return  True if the address is either a variable or label
+     */
+    public boolean contains(String key){
+        return symbolTable.containsKey(key);
     }
 }

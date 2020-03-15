@@ -14,16 +14,17 @@ public class Parser {
 	private String compMnemonic;
 	private String destMnemonic;
 	private String jumpMnemonic;
-	private String rawLine;
+	private String line;
 	private Command commandType;
 	private int lineCount;
+	private SymbolTable table;
 	
 
 	
 	public Parser(File file) throws IOException {
 		scan = new Scanner(file);
 		writer = new FileWriter(file.getName().substring(0, file.getName().indexOf(".")) + ".hack");
-		SymbolTable table = new SymbolTable(file);
+		table = new SymbolTable(file);
 	}
 	
 	/**
@@ -32,20 +33,35 @@ public class Parser {
 	 * @throws NumberFormatException
 	 * @throws IOException
 	 */
-	public void advance() throws NumberFormatException, IOException {
-		rawLine = scan.nextLine();
-		rawLine = cleanText(rawLine);
-		commandType = getInstructionType(rawLine);
-		
-		if(commandType != Command.NO_INSTRUCTION)
-			lineCount++;
-		
-		try {
-			if(commandType == Command.INVALID_INSTRUCTION)
+	public void advance() throws NumberFormatException, IOException, InvalidAssemblyInstructionException{
+		line = cleanText(scan.nextLine());
+		commandType = getInstructionType(line);
+
+		if(commandType == Command.INVALID_INSTRUCTION){
 				throw new InvalidAssemblyInstructionException();
-			System.out.println(rawLine + "\t" + commandType);
 		}
-		catch(InvalidAssemblyInstructionException iaie) {}
+		else if(commandType == Command.A_INSTRUCTION){
+			line = line.substring(1);
+
+			if( table.contains(line) )
+				writer.write("@" + decimalToBinary(table.getAddress(line)));
+			else if(isDigit(line))
+				writer.write("@" + decimalToBinary(Integer.parseInt(line)));
+			else if(line.charAt(1) == 'R' && isDigit(line.substring(2)))
+				writer.write("@" + decimalToBinary(Integer.parseInt(line.substring(2))));
+
+			lineCount++;
+		}
+		else if(commandType == Command.L_INSTRUCTION){
+			writer.write("@" + decimalToBinary(table.getAddress(line)));
+		}
+		else if(commandType == Command.C_INSTRUCTION){
+			destMnemonic = getDestMnemonic(line);
+			compMnemonic = getCompMnemonic(line);
+			jumpMnemonic = getJumpMnemonic(line);
+
+		}
+
 	}
 	
 	/**
@@ -76,7 +92,7 @@ public class Parser {
 	 * @param text	The assembly instruction
 	 * @return	Command instruction type
 	 */
-	public Command getInstructionType(String text) {
+	private Command getInstructionType(String text) {
 		if(text.isEmpty())
 			return Command.NO_INSTRUCTION;
 			else if(text.charAt(0) == '@')
@@ -117,7 +133,7 @@ public class Parser {
 			text = text.substring(0, text.indexOf(";"));
 		
 		if(text.contains("="))
-			text = text.substring(0, rawLine.indexOf('='));
+			text = text.substring(0, text.indexOf('='));
 		
 		return text;		
 	}
@@ -242,11 +258,21 @@ public class Parser {
 			}
 		}		
 		return false;
-	}	
-	
+	}
+
+	private boolean isDigit(String text){
+		try{
+			Integer.parseInt(text);
+			return true;
+		}
+		catch(NumberFormatException nfe){
+			return false;
+		}
+	}
+
 	private class InvalidAssemblyInstructionException extends Exception{
 		private InvalidAssemblyInstructionException() {
-			JOptionPane.showMessageDialog(null, "Invalid assembly instruction found at line: " + lineCount + "\nString: " + rawLine, "Error", 0);
+			JOptionPane.showMessageDialog(null, "Invalid assembly instruction found at line: " + lineCount + "\nString: " + line, "Error", 0);
 			System.out.close();
 		}
 	}
