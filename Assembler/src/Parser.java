@@ -25,6 +25,8 @@ public class Parser {
 		scan = new Scanner(file);
 		writer = new FileWriter(file.getName().substring(0, file.getName().indexOf(".")) + ".hack");
 		table = new SymbolTable(file);
+
+		JOptionPane.showMessageDialog(null, file.getName() + " has been successfully assembled.", "Success!", 1);
 	}
 	
 	/**
@@ -34,14 +36,14 @@ public class Parser {
 	 * @throws IOException
 	 */
 	public void advance() throws NumberFormatException, IOException, InvalidAssemblyInstructionException{
-		line = cleanText(scan.nextLine());
+		line = cleanText(scan.nextLine().trim());
 		commandType = getInstructionType(line);
 
-		if(commandType == Command.INVALID_INSTRUCTION){
+		if(commandType == Command.INVALID_INSTRUCTION)
 				throw new InvalidAssemblyInstructionException();
-		}
 		else if(commandType == Command.A_INSTRUCTION){
 			line = line.substring(1);
+
 
 			if( table.contains(line) )
 				writer.write(decimalToBinary(table.getAddress(line)) + "\n");
@@ -50,9 +52,8 @@ public class Parser {
 			else if(line.charAt(0) == 'R' && isDigit(line.substring(1)))
 				writer.write(decimalToBinary(Integer.parseInt(line.substring(1))) + "\n");
 
-
-
 			lineCount++;
+
 		}
 		//else if(commandType == Command.L_INSTRUCTION){
 		//	writer.write(decimalToBinary(table.getAddress(line)));
@@ -86,7 +87,8 @@ public class Parser {
 	private String cleanText(String text) {	
 		if(text.contains("//"))
 			text = text.substring(0, text.indexOf("//")).trim();
-		
+
+		text = text.replace(" ", "");
 		return text;	
 	}
 	
@@ -99,7 +101,7 @@ public class Parser {
 	private Command getInstructionType(String text) {
 		if(text.isEmpty())
 			return Command.NO_INSTRUCTION;
-			else if(text.charAt(0) == '@')
+		else if(text.charAt(0) == '@')
 			return Command.A_INSTRUCTION;
 		else if(text.contains("=") || text.contains(";"))
 			return Command.C_INSTRUCTION;

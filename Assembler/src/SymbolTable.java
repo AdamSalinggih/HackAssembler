@@ -14,6 +14,11 @@ public class SymbolTable {
         Scanner labelReader = new Scanner(file);
         addEntry("SCREEN", 16384);
         addEntry("KBD", 24576);
+        addEntry("SP", 0);
+        addEntry("LCL", 1);
+        addEntry("ARG", 2);
+        addEntry("THIS", 3);
+        addEntry("THAT", 4);
         //read all labels
         while(labelReader.hasNextLine()){
             String line = clean(labelReader.nextLine());
@@ -58,6 +63,7 @@ public class SymbolTable {
                 }
             }
         }
+
         labelReader.close();
         variableReader.close();
     }
@@ -96,6 +102,7 @@ public class SymbolTable {
         if(text.contains("//"))
             text = text.substring(0, text.indexOf("//")).trim();
 
+        text = text.replace(" ", "").trim();
         return text;
     }
 
