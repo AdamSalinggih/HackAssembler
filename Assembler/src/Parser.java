@@ -63,7 +63,6 @@ public class Parser {
 			jumpMnemonic = mapper.jump(getJumpMnemonic(line));
 			int compBit = getCompAddressType(getCompMnemonic(line));
 
-			System.out.println(line + ", compMnemonic: " + getCompMnemonic(line) + ", The a bit: " + compBit);
 			writer.write("111" + compBit + compMnemonic + destMnemonic +jumpMnemonic + "\n");
 		}
 
