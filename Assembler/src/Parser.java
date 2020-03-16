@@ -44,22 +44,27 @@ public class Parser {
 			line = line.substring(1);
 
 			if( table.contains(line) )
-				writer.write("@" + decimalToBinary(table.getAddress(line)));
+				writer.write(decimalToBinary(table.getAddress(line)) + "\n");
 			else if(isDigit(line))
-				writer.write("@" + decimalToBinary(Integer.parseInt(line)));
-			else if(line.charAt(1) == 'R' && isDigit(line.substring(2)))
-				writer.write("@" + decimalToBinary(Integer.parseInt(line.substring(2))));
+				writer.write(decimalToBinary(Integer.parseInt(line)) +"\n");
+			else if(line.charAt(0) == 'R' && isDigit(line.substring(1)))
+				writer.write(decimalToBinary(Integer.parseInt(line.substring(1))) + "\n");
+
+
 
 			lineCount++;
 		}
-		else if(commandType == Command.L_INSTRUCTION){
-			writer.write("@" + decimalToBinary(table.getAddress(line)));
-		}
+		//else if(commandType == Command.L_INSTRUCTION){
+		//	writer.write(decimalToBinary(table.getAddress(line)));
+		//}
 		else if(commandType == Command.C_INSTRUCTION){
-			destMnemonic = getDestMnemonic(line);
-			compMnemonic = getCompMnemonic(line);
-			jumpMnemonic = getJumpMnemonic(line);
+			destMnemonic = mapper.dest(getDestMnemonic(line));
+			compMnemonic = mapper.comp(getCompMnemonic(line));
+			jumpMnemonic = mapper.jump(getJumpMnemonic(line));
+			int compBit = getCompAddressType(getCompMnemonic(line));
 
+			System.out.println(line + ", compMnemonic: " + getCompMnemonic(line) + ", The a bit: " + compBit);
+			writer.write("111" + compBit + compMnemonic + destMnemonic +jumpMnemonic + "\n");
 		}
 
 	}
@@ -129,9 +134,11 @@ public class Parser {
 	 * @return The destination mnemonic
 	 */
 	private String getDestMnemonic(String text) {
+		if(!text.contains("="))
+			return "null";
+
 		if(text.contains(";"))
 			text = text.substring(0, text.indexOf(";"));
-		
 		if(text.contains("="))
 			text = text.substring(0, text.indexOf('='));
 		
@@ -144,11 +151,16 @@ public class Parser {
 	 * @param text The instruction string
 	 * @return The comp mnemonic
 	 */
-	private String getCompMnemonic(String text) {	
+	private String getCompMnemonic(String text) {
+		if(!text.contains("=") && text.contains(";"))
+			return text.substring(0, text.indexOf(";"));
+
 		if(text.contains(";"))
-			return text.substring(text.indexOf('=') + 1, text.indexOf(";"));
-		else
-			return text.substring(text.indexOf('=') + 1);		
+			return text.substring(text.indexOf("=") + 1, text.indexOf(";"));
+		else {
+			return text.substring(text.indexOf("=") + 1);
+
+		}
 	}
 	
 	/**
@@ -159,7 +171,7 @@ public class Parser {
 	 */
 	private String getJumpMnemonic(String text) {
 		if(text.contains(";"))
-			return text.substring(text.indexOf(";"));
+			return text.substring(text.indexOf(";") + 1);
 		else
 			return "null";
 	}
@@ -260,6 +272,12 @@ public class Parser {
 		return false;
 	}
 
+	/**
+	 * Determines whether the String is digits
+	 *
+	 * @param text The string
+	 * @return	True if every char in the string is digit
+	 */
 	private boolean isDigit(String text){
 		try{
 			Integer.parseInt(text);
@@ -268,6 +286,29 @@ public class Parser {
 		catch(NumberFormatException nfe){
 			return false;
 		}
+	}
+
+	/**
+	 * Return the comp mnemonic address type
+	 *
+	 * @param text The mnemonic
+	 * @return 0 for A type/ 1 for M type
+	 */
+	private int getCompAddressType(String text){
+		if(     text.equals("M") ||
+				text.equals("!M") ||
+				text.equals("-M") ||
+				text.equals("M+1") ||
+				text.equals("M-1") ||
+				text.equals("D+M") ||
+				text.equals("M+D") ||
+				text.equals("D-M") ||
+				text.equals("M-D") ||
+				text.equals("D&M") ||
+				text.equals("D|M"))
+			return 1;
+
+		return 0;
 	}
 
 	private class InvalidAssemblyInstructionException extends Exception{

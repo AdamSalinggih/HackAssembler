@@ -24,6 +24,7 @@ public class CInstructionMapper {
 		compCode.put("D-1", "001110");
 		compCode.put("A-1", "110010");
 		compCode.put("D+A", "000010");
+		compCode.put("A+D", "000010");
 		compCode.put("D-A", "010011");
 		compCode.put("A-D", "000111");
 		compCode.put("D&A", "000000");
@@ -34,6 +35,7 @@ public class CInstructionMapper {
 		compCode.put("M+1", "110111");
 		compCode.put("M-1", "110010");
 		compCode.put("D+M", "000010");
+		compCode.put("M+D", "000010");
 		compCode.put("D-M", "010011");
 		compCode.put("M-D", "000111");
 		compCode.put("D&M", "000000");

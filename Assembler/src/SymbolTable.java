@@ -34,33 +34,29 @@ public class SymbolTable {
 
         //read all variables
         Scanner variableReader = new Scanner(file);
-        while(variableReader.hasNextLine()){
+        while(variableReader.hasNextLine()) {
             String line = clean(variableReader.nextLine());
-            if(line.isEmpty())
+            if (line.isEmpty())
                 continue;
-            else if(line.charAt(0) == '@' && line.charAt(1) == 'R'){
+            else if (line.charAt(0) == '@' && line.charAt(1) == 'R') {
                 line = line.substring(2);
-                try{
+                try {
                     Integer.parseInt(line);
                     continue;
-                }
-                catch(NumberFormatException nfe){
-                    if(!symbolTable.containsKey("R" + line))
+                } catch (NumberFormatException nfe) {
+                    if (!symbolTable.containsKey("R" + line))
                         symbolTable.put("R" + line, varCount++);
-                        continue;
+                    continue;
                 }
-            }
-            else if(line.charAt(0) == '@'){
+            } else if (line.charAt(0) == '@') {
                 line = line.substring(1);
-                try{
+                try {
                     Integer.parseInt(line);
-                }
-                catch(NumberFormatException nfe){
-                    if(!symbolTable.containsKey(line))
+                } catch (NumberFormatException nfe) {
+                    if (!symbolTable.containsKey(line))
                         symbolTable.put(line, varCount++);
                 }
             }
-
         }
         labelReader.close();
         variableReader.close();
