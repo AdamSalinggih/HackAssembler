@@ -11,12 +11,8 @@ public class Parser {
 	protected static Scanner scan;
 	protected static FileWriter writer;
 	private CInstructionMapper mapper = new CInstructionMapper();
-	private String compMnemonic;
-	private String destMnemonic;
-	private String jumpMnemonic;
 	private String line;
-	private Command commandType;
-	private int lineCount;
+	int		lineCount;
 	private SymbolTable table;
 	
 
@@ -37,7 +33,7 @@ public class Parser {
 	 */
 	public void advance() throws NumberFormatException, IOException, InvalidAssemblyInstructionException{
 		line = cleanText(scan.nextLine().trim());
-		commandType = getInstructionType(line);
+		Command commandType = getInstructionType(line);
 
 		if(commandType == Command.INVALID_INSTRUCTION)
 				throw new InvalidAssemblyInstructionException();
@@ -51,22 +47,19 @@ public class Parser {
 				writer.write(decimalToBinary(Integer.parseInt(line)) +"\n");
 			else if(line.charAt(0) == 'R' && isDigit(line.substring(1)))
 				writer.write(decimalToBinary(Integer.parseInt(line.substring(1))) + "\n");
-
-			lineCount++;
-
 		}
 		//else if(commandType == Command.L_INSTRUCTION){
 		//	writer.write(decimalToBinary(table.getAddress(line)));
 		//}
 		else if(commandType == Command.C_INSTRUCTION){
-			destMnemonic = mapper.dest(getDestMnemonic(line));
-			compMnemonic = mapper.comp(getCompMnemonic(line));
-			jumpMnemonic = mapper.jump(getJumpMnemonic(line));
+			String destMnemonic = mapper.dest(getDestMnemonic(line));
+			String compMnemonic = mapper.comp(getCompMnemonic(line));
+			String jumpMnemonic = mapper.jump(getJumpMnemonic(line));
 			int compBit = getCompAddressType(getCompMnemonic(line));
 
 			writer.write("111" + compBit + compMnemonic + destMnemonic +jumpMnemonic + "\n");
 		}
-
+		lineCount++;
 	}
 	
 	/**
@@ -176,102 +169,7 @@ public class Parser {
 		else
 			return "null";
 	}
-	
-	/**
-	 * Read a label instruction and returns the label's name
-	 * 
-	 * @param text The instruction string
-	 * @return The label's name
-	 */
-	private String getLabelMnemonic(String text) {
-		return text.substring(1, text.length() - 1);
-	}
-	
-	/**
-	 * 
-	 * @param text The string
-	 * @return True if the string is within parentheses
-	 */
-	private boolean isLabelInstruction(String text) {
-		if(text.charAt(0) == '(' && text.charAt(text.length() - 1) == ')')
-			return true;
-		
-		return false;
-	}
-	
-	/**
-	 * Identify whether the input string is an address instruction
-	 * 
-	 * @param text The string
-	 * @return True if the string is an address instruction;
-	 */
-	private boolean isAddressInstruction(String text) {
-		if(text.charAt(0) == '@') {
-			text = text.substring(1);
-			if(text.charAt(0) == 'R')
-				text = text.substring(1);
-			
-			try {
-				int val = Integer.parseInt(text);
-				
-				if(val < 16384)
-					return true;
-			}
-			catch(NumberFormatException nfe) {
-				return false;
-			}
-		}		
-		return false;
-	}
-	
-	/**
-	 * Identify whether the string is a screen instruction
-	 * 
-	 * @param text The string
-	 * @return True if the string is "@SCREEN" or any integer between 16384 and 24575;
-	 */
-	private boolean isSreenInstruction(String text) {
-		if(text.equals("@SCREEN"))
-			return true;
-		
-		if(text.charAt(0) == '@') {
-			text = text.substring(1);			
-			try {
-				int val = Integer.parseInt(text);		
-				if(val > 16383 && val < 24576)
-					return true;
-			}
-			catch(NumberFormatException nfe) {
-				return false;
-			}
-		}		
-		return false;
-	}
-	
-	
-	/**
-	 * Identify whether an instruction is accessing the keyboard
-	 * 
-	 * @param text The instruction string
-	 * @return True if it accesses keyboard addresses
-	 */
-	private boolean isKeyboardInstruction(String text) {
-		if(text.equals("@KBD"))
-			return true;
-		
-		if(text.charAt(0) == '@') {
-			text = text.substring(1);			
-			try {
-				int val = Integer.parseInt(text);		
-				if(val > 24575)
-					return true;
-			}
-			catch(NumberFormatException nfe) {
-				return false;
-			}
-		}		
-		return false;
-	}
+
 
 	/**
 	 * Determines whether the String is digits
@@ -312,6 +210,9 @@ public class Parser {
 		return 0;
 	}
 
+	/**
+	 * A custom exception class to handle invalid assembly instruction
+	 */
 	private class InvalidAssemblyInstructionException extends Exception{
 		private InvalidAssemblyInstructionException() {
 			JOptionPane.showMessageDialog(null, "Invalid assembly instruction found at line: " + lineCount + "\nString: " + line, "Error", 0);

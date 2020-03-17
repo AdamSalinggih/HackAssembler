@@ -1,7 +1,9 @@
 /**
  * @author Adam Salinggih
  * @version 1.0
- * @project Project 7 of nand2tetris. 
+ * @project Project 7 of nand2tetris.
+ * @date	03/16/2020
+ *
  * 	Assembler program to convert an assembly file
  * 	into a hack file by translating all instructions
  * 	within the given file into its machine language(binary codes)

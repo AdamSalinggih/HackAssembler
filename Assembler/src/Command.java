@@ -1,5 +1,4 @@
 /**
- * 
  * Class enum Command
  * 
  * List of all valid instruction types

@@ -10,8 +10,17 @@ public class SymbolTable {
     private int lineCount = 0;
     private HashMap<String, Integer> symbolTable = new HashMap<String, Integer>();
 
+    /**
+     * Create SymbolTable object, add designated keywords and read
+     * all labels and variables in the assembly file
+     *
+     * @param file  The file
+     * @throws FileNotFoundException
+     */
     public SymbolTable(File file) throws FileNotFoundException {
         Scanner labelReader = new Scanner(file);
+
+        //Adding all designated keywords to the table
         addEntry("SCREEN", 16384);
         addEntry("KBD", 24576);
         addEntry("SP", 0);
@@ -19,6 +28,7 @@ public class SymbolTable {
         addEntry("ARG", 2);
         addEntry("THIS", 3);
         addEntry("THAT", 4);
+
         //read all labels
         while(labelReader.hasNextLine()){
             String line = clean(labelReader.nextLine());
