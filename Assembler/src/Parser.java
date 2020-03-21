@@ -8,8 +8,8 @@ import java.util.Scanner;
 import javax.swing.JOptionPane;
 
 public class Parser {
-	protected static Scanner scan;
-	protected static FileWriter writer;
+	private Scanner scan;
+	private FileWriter writer;
 	private CInstructionMapper mapper = new CInstructionMapper();
 	private String line;
 	int		lineCount;
@@ -208,6 +208,16 @@ public class Parser {
 			return 1;
 
 		return 0;
+	}
+
+	/**
+	 * Terminate running Scanner and FileWriter objects
+	 *
+	 * @throws IOException
+	 */
+	public void terminate() throws IOException {
+		scan.close();
+		writer.close();
 	}
 
 	/**

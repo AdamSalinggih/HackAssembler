@@ -35,9 +35,10 @@ public class Assembler {
 				while(parser.hasMoreCommands()) {
 					parser.advance();
 				}
-				
-				Parser.writer.close();
-				Parser.scan.close();
+
+				//close all running reader and writer objects
+				parser.terminate();
+
 				break;	
 			}
 			catch(Exception e) {
