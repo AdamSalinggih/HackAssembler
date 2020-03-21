@@ -235,6 +235,11 @@ public class Parser {
 
 	/**
 	 * A custom exception class to handle invalid assembly instruction
+	 *
+	 * Should this exception be thrown, it will be caught in the main class
+	 * by notifying the user of where the invalid instruction is located in the
+	 * assembly file. It will then proceed to terminate current running instance
+	 * of the program
 	 */
 	public class InvalidAssemblyInstructionException extends Exception{
 		private InvalidAssemblyInstructionException() {

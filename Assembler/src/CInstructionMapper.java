@@ -1,3 +1,11 @@
+/**
+ *CInstructionMapper.java
+ *
+ * This class assigns all valid instructions
+ * into HashMap objects which will be used
+ * during the translation of the assembly files
+ */
+
 import java.util.HashMap;
 
 public class CInstructionMapper {
@@ -10,6 +18,7 @@ public class CInstructionMapper {
 	 * Assign all valid mnemonics with its associated binary instructions.
 	 */
 	public CInstructionMapper() {
+		//All valid comp instructions
 		compCode.put("0", "101010");
 		compCode.put("1", "111111");
 		compCode.put("-1", "111010");
@@ -40,7 +49,8 @@ public class CInstructionMapper {
 		compCode.put("M-D", "000111");
 		compCode.put("D&M", "000000");
 		compCode.put("D|M", "010101");
-		
+
+		//All valid dest instructions
 		destCode.put("null", "000");
 		destCode.put("M", "001");
 		destCode.put("D", "010");
@@ -49,7 +59,8 @@ public class CInstructionMapper {
 		destCode.put("AM", "101");
 		destCode.put("AD", "110");
 		destCode.put("AMD", "111");
-		
+
+		//All valid jump instructions
 		jumpCode.put("null", "000");
 		jumpCode.put("JGT", "001");
 		jumpCode.put("JEQ", "010");
@@ -63,7 +74,7 @@ public class CInstructionMapper {
 	/**
 	 * Return the binary code for computation instruction segment
 	 * 
-	 * @param mnemonic
+	 * @param mnemonic The passed mnemonic
 	 * @return Binary code instruction
 	 */
 	public String comp(String mnemonic) {
@@ -73,7 +84,7 @@ public class CInstructionMapper {
 	/**
 	 * Return the binary code for destination instruction segment
 	 * 
-	 * @param mnemonic
+	 * @param mnemonic The passed mnemonic
 	 * @return Binary code instruction
 	 */
 	public String dest(String mnemonic) {
@@ -83,12 +94,10 @@ public class CInstructionMapper {
 	/**
 	 * Return the binary code for jump instruction segment
 	 * 
-	 * @param mnemonic 
+	 * @param mnemonic The passed mnemonic
 	 * @return Binary code instruction instruction
 	 */
 	public String jump(String mnemonic) {
 		return jumpCode.get(mnemonic);
 	}
-
-
 }

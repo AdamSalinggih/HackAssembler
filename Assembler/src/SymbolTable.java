@@ -1,3 +1,13 @@
+/**
+ * SymbolTable.java
+ *
+ * This class reads all labels in the assembly file and assign them
+ * into a hashmap object. Once all labels are read, it will read the
+ * assembly file one more time to read all variables and also assign
+ * them into the same hashmap object. Reserved keywords are assigned
+ * to the hashmap in the beginning of the construction call.
+ */
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.HashMap;
@@ -77,7 +87,7 @@ public class SymbolTable {
     }
 
     /**
-     * Return assigned RAM or ROM addresses for specified the
+     * Return assigned RAM or ROM addresses for the specified
      * variable or label
      *
      * @param text      The variable or label
@@ -112,10 +122,10 @@ public class SymbolTable {
     }
 
     /**
-     * Return whether the address is a variable or label
+     * Return whether the specified variable or label exists
      *
-     * @param key   The address
-     * @return  True if the address is either a variable or label
+     * @param key   The name of the variable or label
+     * @return  True if the specified variable or label exists in the hashmap
      */
     public boolean contains(String key){
         return symbolTable.containsKey(key);
