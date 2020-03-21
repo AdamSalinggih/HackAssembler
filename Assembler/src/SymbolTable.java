@@ -1,11 +1,9 @@
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
 
 public class SymbolTable {
-    private ArrayList<String> variableNames = new ArrayList<>();
     private int varCount = 16;
     private int lineCount = 0;
     private HashMap<String, Integer> symbolTable = new HashMap<String, Integer>();
@@ -15,7 +13,7 @@ public class SymbolTable {
      * all labels and variables in the assembly file
      *
      * @param file  The file
-     * @throws FileNotFoundException
+     * @throws FileNotFoundException If file is not found
      */
     public SymbolTable(File file) throws FileNotFoundException {
         Scanner labelReader = new Scanner(file);
@@ -94,12 +92,9 @@ public class SymbolTable {
      *
      * @param key       Variable names or label names
      * @param address   RAM address or ROM address
-     * @return          True for successful entry
      */
-    private boolean addEntry(String key, int address){
+    private void addEntry(String key, int address){
         symbolTable.put(key, address);
-
-        return true;
     }
 
     /**

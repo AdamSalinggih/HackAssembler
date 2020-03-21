@@ -27,7 +27,7 @@ public class Assembler {
 				
 				file = fileChooser.getSelectedFile();
 				
-				if(!file.getName().substring(file.getName().indexOf("."), file.getName().length()).equals(".asm"))
+				if(!file.getName().substring(file.getName().indexOf(".")).equals(".asm"))
 					throw new Exception();
 				
 				parser = new Parser(file);
@@ -36,10 +36,17 @@ public class Assembler {
 					parser.advance();
 				}
 
+				JOptionPane.showMessageDialog(null, file.getName() + " has been successfully assembled.", "Success!", 1);
+
 				//close all running reader and writer objects
 				parser.terminate();
 
 				break;	
+			}
+			catch(Parser.InvalidAssemblyInstructionException iaie){
+				iaie.printStackTrace();
+				JOptionPane.showMessageDialog(null, "Unable to translate the assembly file", "Error", 0);
+				System.exit(0);
 			}
 			catch(Exception e) {
 				e.printStackTrace();

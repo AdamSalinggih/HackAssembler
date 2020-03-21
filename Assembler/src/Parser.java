@@ -21,15 +21,13 @@ public class Parser {
 		scan = new Scanner(file);
 		writer = new FileWriter(file.getName().substring(0, file.getName().indexOf(".")) + ".hack");
 		table = new SymbolTable(file);
-
-		JOptionPane.showMessageDialog(null, file.getName() + " has been successfully assembled.", "Success!", 1);
 	}
 	
 	/**
 	 * Read the next available line in the assembly file
 	 * 
-	 * @throws NumberFormatException
-	 * @throws IOException
+	 * @throws NumberFormatException If the string is not digits
+	 * @throws IOException	IOException occurs
 	 */
 	public void advance() throws NumberFormatException, IOException, InvalidAssemblyInstructionException{
 		line = cleanText(scan.nextLine().trim());
@@ -55,6 +53,8 @@ public class Parser {
 			String destMnemonic = mapper.dest(getDestMnemonic(line));
 			String compMnemonic = mapper.comp(getCompMnemonic(line));
 			String jumpMnemonic = mapper.jump(getJumpMnemonic(line));
+
+			checkForInvalidInstruction(getDestMnemonic(line), getCompMnemonic(line), getJumpMnemonic(line));
 			int compBit = getCompAddressType(getCompMnemonic(line));
 
 			writer.write("111" + compBit + compMnemonic + destMnemonic +jumpMnemonic + "\n");
@@ -106,7 +106,7 @@ public class Parser {
 	/**
 	 * Convert an integer to a 16-bit binary
 	 * 
-	 * @param num
+	 * @param num The integer
 	 * @return 16-bit binary representation
 	 */
 	private String decimalToBinary(int num) {
@@ -213,7 +213,7 @@ public class Parser {
 	/**
 	 * Terminate running Scanner and FileWriter objects
 	 *
-	 * @throws IOException
+	 * @throws IOException If IOException occurs
 	 */
 	public void terminate() throws IOException {
 		scan.close();
@@ -221,12 +221,24 @@ public class Parser {
 	}
 
 	/**
+	 * Checking whether the C-Instruction has any invalid mnemonic
+	 *
+	 * @param dest	dest mnemonic
+	 * @param comp	comp mnemonic
+	 * @param jump	jump mnemonic
+	 * @throws InvalidAssemblyInstructionException If the mnemonic is invalid
+	 */
+	private void checkForInvalidInstruction(String dest, String comp, String jump) throws InvalidAssemblyInstructionException {
+		if( mapper.dest(dest) == null || mapper.comp(comp) == null || mapper.jump(jump) == null)
+			throw new InvalidAssemblyInstructionException();
+	}
+
+	/**
 	 * A custom exception class to handle invalid assembly instruction
 	 */
-	private class InvalidAssemblyInstructionException extends Exception{
+	public class InvalidAssemblyInstructionException extends Exception{
 		private InvalidAssemblyInstructionException() {
 			JOptionPane.showMessageDialog(null, "Invalid assembly instruction found at line: " + lineCount + "\nString: " + line, "Error", 0);
-			System.out.close();
 		}
 	}
 }
