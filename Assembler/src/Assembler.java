@@ -10,7 +10,6 @@
  */
 
 import java.io.File;
-import java.util.NoSuchElementException;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
