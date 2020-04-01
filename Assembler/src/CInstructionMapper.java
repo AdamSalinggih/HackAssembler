@@ -9,9 +9,9 @@
 import java.util.HashMap;
 
 public class CInstructionMapper {
-	HashMap<String, String> compCode = new HashMap<String,String>();
-	HashMap<String, String> destCode = new HashMap<String,String>();
-	HashMap<String, String> jumpCode = new HashMap<String,String>();
+	private HashMap<String, String> compCode = new HashMap<String,String>();
+	private HashMap<String, String> destCode = new HashMap<String,String>();
+	private HashMap<String, String> jumpCode = new HashMap<String,String>();
 	
 	/**
 	 * Constructor for CInstructionMapper class

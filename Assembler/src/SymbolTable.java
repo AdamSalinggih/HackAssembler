@@ -1,4 +1,4 @@
-/**
+/*
  * SymbolTable.java
  *
  * This class reads all labels in the assembly file and assign them
@@ -29,13 +29,13 @@ public class SymbolTable {
         Scanner labelReader = new Scanner(file);
 
         //Adding all designated keywords to the table
-        addEntry("SCREEN", 16384);
-        addEntry("KBD", 24576);
-        addEntry("SP", 0);
-        addEntry("LCL", 1);
-        addEntry("ARG", 2);
-        addEntry("THIS", 3);
-        addEntry("THAT", 4);
+        symbolTable.put("SCREEN", 16384);
+        symbolTable.put("KBD", 24576);
+        symbolTable.put("SP", 0);
+        symbolTable.put("LCL", 1);
+        symbolTable.put("ARG", 2);
+        symbolTable.put("THIS", 3);
+        symbolTable.put("THAT", 4);
 
         //read all labels
         while(labelReader.hasNextLine()){
@@ -47,7 +47,7 @@ public class SymbolTable {
                 line = line.replace(")", "");
 
                 if(!symbolTable.containsKey(line))
-                    addEntry(line, lineCount);
+                    symbolTable.put(line, lineCount);
             }
             else {
                 lineCount++;
@@ -95,16 +95,6 @@ public class SymbolTable {
      */
     public int getAddress(String text){
         return symbolTable.get(text);
-    }
-
-    /**
-     * Add variable or label entries to the symbolTable
-     *
-     * @param key       Variable names or label names
-     * @param address   RAM address or ROM address
-     */
-    private void addEntry(String key, int address){
-        symbolTable.put(key, address);
     }
 
     /**

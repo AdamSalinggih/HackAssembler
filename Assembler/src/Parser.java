@@ -43,9 +43,6 @@ public class Parser {
 			else if(line.charAt(0) == 'R' && isDigit(line.substring(1)))
 				writer.write(decimalToBinary(Integer.parseInt(line.substring(1))) + "\n");
 		}
-		//else if(commandType == Command.L_INSTRUCTION){
-		//	writer.write(decimalToBinary(table.getAddress(line)));
-		//}
 		else if(commandType == Command.C_INSTRUCTION){
 			String destMnemonic = mapper.dest(getDestMnemonic(line));
 			String compMnemonic = mapper.comp(getCompMnemonic(line));
